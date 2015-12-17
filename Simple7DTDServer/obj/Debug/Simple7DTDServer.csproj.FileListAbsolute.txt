@@ -1,0 +1,16 @@
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Simple7DTDServer.exe
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Simple7DTDServer.pdb
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.csprojResolveAssemblyReference.cache
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.Form1.resources
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.Properties.Resources.resources
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.csproj.GenerateResource.Cache
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.exe
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.pdb
+c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Simple7DTDServer.exe.config
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.LanguageSelector.resources
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Interop.UPNPLib.dll
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.csproj.ResolveComReference.cache
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Interop.NATUPNPLib.dll
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Interop.NATUPNPLib.dll
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Interop.UPNPLib.dll
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.Config_Editor.resources
