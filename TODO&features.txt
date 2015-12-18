@@ -1,0 +1,11 @@
+﻿[TODO]
+Autosave
+
+[WORKING IN]
+Easy commands
+
+[FEATURES]
+Auto port mapping (requires UPnP)
+Internal simple Telnet client (You don't have to install other telnet clients.)
+Config editor
+Start & end server
