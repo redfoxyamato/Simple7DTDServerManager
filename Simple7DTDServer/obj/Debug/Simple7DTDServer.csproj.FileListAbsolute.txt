@@ -14,3 +14,4 @@ C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDSer
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Interop.NATUPNPLib.dll
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Interop.UPNPLib.dll
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.Config_Editor.resources
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.EasyCommands.resources

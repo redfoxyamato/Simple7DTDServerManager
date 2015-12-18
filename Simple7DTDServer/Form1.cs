@@ -14,7 +14,7 @@ namespace Simple7DTDServer
     public partial class Form1 : Form
     {
         private static string extIP,baseDir,gameExe,serverCfg;
-        private static int serverPort,telnetPort;
+        public static int serverPort,telnetPort;
         private static bool hasServerStarted;
         private static bool portWarning;
 
@@ -26,9 +26,15 @@ namespace Simple7DTDServer
         private static Settings settings = null;
         private static LanguageSelector langSelector;
         private static Config_Editor editor;
+        private static EasyCommands commands;
         private static string mainFolder;
 
         private static bool isServerPortOpening;
+
+        public static TelnetConnection TELNET
+        {
+            get { return tel; }
+        }
 
         public Form1()
         {
@@ -98,6 +104,8 @@ namespace Simple7DTDServer
             killServerProcesses();
             test();
             mainFolder = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
+            commands = new EasyCommands(this);
+            commands.Show();
         }
 
         private Settings getSetting()
@@ -359,7 +367,7 @@ namespace Simple7DTDServer
                 hasServerStarted = false;
                 if (getIsConnected())
                 {
-                    tel.WriteLine("shutdown");
+                    tel.WriteLine("shutdown",false);
                 }
             }
         }
@@ -372,7 +380,7 @@ namespace Simple7DTDServer
             {
                 textBox1.Text = translateTo("connected") + "\r\n\r\n";
                 connectCheck.Stop();
-                tel = new TelnetConnection(host,port,textBox1);
+                tel = new TelnetConnection(host,port,textBox1,true);
                 if (getNode("TelnetPassword") == "")
                 {
                     timerServerUpdate.Start();
@@ -459,7 +467,7 @@ namespace Simple7DTDServer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            tel.WriteLine(textBox2.Text);
+            tel.WriteLine(textBox2.Text,false);
             textBox2.Text = "";
         }
 
@@ -467,11 +475,15 @@ namespace Simple7DTDServer
         {
             if(!p.HasExited && getIsConnected())
             {
-                if (tel.getStoredSize() > 0)
+                new Thread(() =>
                 {
-                    //サーバーから情報が送られてきた時のみ処理する
-                    tel.Read();
-                }
+                    string ret = tel.Read();
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        textBox1.AppendText(ret);
+                        textBox1.SelectionStart = textBox1.Text.Length - 1;
+                    });
+                }).Start();
             }
             else
             {
@@ -523,7 +535,7 @@ namespace Simple7DTDServer
         }
         public static bool isPortOpen(int port)
         {
-            if (!File.Exists("bin/PortChecker.exe") || !File.Exists("bin/TCPServer.exe"))
+            if (!File.Exists("bin/TCPServer.exe"))
             {
                 MessageBox.Show(translateTo("notEnoughFile"));
                 return true;
@@ -581,11 +593,20 @@ namespace Simple7DTDServer
             }).Start();
         }
 
+        private void easyCommandsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setEasyCommandsVisible(easyCommandsToolStripMenuItem.Checked);
+        }
+        public void setEasyCommandsVisible(bool flag)
+        {
+            easyCommandsToolStripMenuItem.Checked = flag;
+            commands.Visible = flag;
+        }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if(p != null && tel != null && tel.IsConnected)
             {
-                tel.WriteLine("shutdown");
+                tel.WriteLine("shutdown",false);
             }
             ClosePorts();
             saveSettings();
@@ -630,6 +651,22 @@ namespace Simple7DTDServer
         }
         private void test()
         {
+        }
+        public bool isExternalMode
+        {
+            get { return externalMode.Checked; }
+        }
+        public string externalIPAddress
+        {
+            get { return externalIP.Text; }
+        }
+        public int externalPortNum
+        {
+            get { return (int)serverExternalPort.Value; }
+        }
+        public int telPort
+        {
+            get { return telnetPort; }
         }
     }
 }

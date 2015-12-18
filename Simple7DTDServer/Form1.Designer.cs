@@ -59,6 +59,8 @@
             this.externalMode = new System.Windows.Forms.RadioButton();
             this.internalMode = new System.Windows.Forms.RadioButton();
             this.killServer = new System.Windows.Forms.Button();
+            this.window = new System.Windows.Forms.ToolStripMenuItem();
+            this.easyCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.connectionType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serverExternalPort)).BeginInit();
@@ -70,7 +72,8 @@
             this.information,
             this.manipulation,
             this.configuration,
-            this.portMenu});
+            this.portMenu,
+            this.window});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(726, 26);
@@ -336,6 +339,24 @@
             this.killServer.UseVisualStyleBackColor = false;
             this.killServer.Click += new System.EventHandler(this.killServer_Click);
             // 
+            // window
+            // 
+            this.window.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.easyCommandsToolStripMenuItem});
+            this.window.Name = "window";
+            this.window.Size = new System.Drawing.Size(66, 22);
+            this.window.Text = "Window";
+            // 
+            // easyCommandsToolStripMenuItem
+            // 
+            this.easyCommandsToolStripMenuItem.Checked = true;
+            this.easyCommandsToolStripMenuItem.CheckOnClick = true;
+            this.easyCommandsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.easyCommandsToolStripMenuItem.Name = "easyCommandsToolStripMenuItem";
+            this.easyCommandsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.easyCommandsToolStripMenuItem.Text = "Easy Commands";
+            this.easyCommandsToolStripMenuItem.Click += new System.EventHandler(this.easyCommandsToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.send;
@@ -400,6 +421,8 @@
         private System.Windows.Forms.ToolStripMenuItem autoMapServer;
         private System.Windows.Forms.Button killServer;
         private System.Windows.Forms.ToolStripMenuItem Check;
+        private System.Windows.Forms.ToolStripMenuItem window;
+        private System.Windows.Forms.ToolStripMenuItem easyCommandsToolStripMenuItem;
     }
 }
 

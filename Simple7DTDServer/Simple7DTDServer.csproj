@@ -55,6 +55,12 @@
     <Compile Include="Config Editor.Designer.cs">
       <DependentUpon>Config Editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="EasyCommands.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EasyCommands.Designer.cs">
+      <DependentUpon>EasyCommands.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +80,9 @@
     <Compile Include="UPnPControlPoint.cs" />
     <EmbeddedResource Include="Config Editor.resx">
       <DependentUpon>Config Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EasyCommands.resx">
+      <DependentUpon>EasyCommands.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

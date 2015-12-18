@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
 
 namespace Simple7DTDServer
 {
@@ -20,18 +21,23 @@ namespace Simple7DTDServer
         SGA = 3
     }
 
-    class TelnetConnection
+    public class TelnetConnection
     {
         TcpClient tcpSocket;
+
+        bool doResponseShow;
 
         int TimeOutMs = 100;
 
         TextBox tBox;
 
-        public TelnetConnection(string Hostname, int Port, TextBox box)
+        private string buffer;
+
+        public TelnetConnection(string Hostname, int Port, TextBox box,bool response)
         {
             tcpSocket = new TcpClient(Hostname, Port);
             tBox = box;
+            doResponseShow = response;
         }
 
         public string Login(string Password)
@@ -40,17 +46,17 @@ namespace Simple7DTDServer
 
             string s = Read();
 
-            WriteLine(Password);
+            WriteLine(Password,false);
             TimeOutMs = oldTimeOutMs;
             return s;
         }
 
-        public void WriteLine(string cmd)
+        public void WriteLine(string cmd,bool buffered)
         {
-            Write(cmd + "\n");
+            Write(cmd + "\n", buffered);
         }
 
-        public void Write(string cmd)
+        public void Write(string cmd, bool buffered)
         {
             try
             {
@@ -63,16 +69,25 @@ namespace Simple7DTDServer
 
         public string Read()
         {
-            if (!tcpSocket.Connected) return null;
-            StringBuilder sb = new StringBuilder();
-            do
+            try
             {
-                ParseTelnet(sb);
-                Thread.Sleep(TimeOutMs);
-            } while (tcpSocket.Available > 0);
-            tBox.AppendText(sb.ToString());
-            tBox.SelectionStart = tBox.Text.Length - 1;
-            return sb.ToString();
+                if (!IsConnected || tcpSocket == null)
+                {
+                    return "";
+                }
+                StringBuilder sb = new StringBuilder();
+                do
+                {
+                    ParseTelnet(sb);
+                    Thread.Sleep(TimeOutMs);
+                } while (tcpSocket.Available > 0 && !sb.ToString().EndsWith("\n"));
+                buffer = sb.ToString();
+                return sb.ToString();
+            }
+            catch(ObjectDisposedException)
+            {
+                return "";
+            }
         }
         public int getStoredSize()
         {
@@ -82,10 +97,13 @@ namespace Simple7DTDServer
         {
             get { return tcpSocket.Connected; }
         }
-
+        public string Buffer
+        {
+            get { return buffer; }
+        }
         public void Disconnect(Form1 form)
         {
-            if (form != null)
+            if (form != null && doResponseShow)
             {
                 tBox.AppendText(Form1.translateTo("disconnected") + "\r\n");
             }
@@ -95,21 +113,20 @@ namespace Simple7DTDServer
         public static bool canConnect(string host,int port)
         {
             bool ret = false;
-            TcpClient cli = new TcpClient();
-            try
-            {
-                cli.Connect(host, port);
-                ret = true;
-            }
-            catch (SocketException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                cli.Close();
-            }
-                
+                TcpClient cli = new TcpClient();
+                try
+                {
+                    cli.Connect(host, port);
+                    ret = true;
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    cli.Close();
+                }
             return ret;
         }
 
