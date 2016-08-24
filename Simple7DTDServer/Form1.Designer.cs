@@ -43,6 +43,8 @@
             this.portMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.autoMapServer = new System.Windows.Forms.ToolStripMenuItem();
             this.Check = new System.Windows.Forms.ToolStripMenuItem();
+            this.window = new System.Windows.Forms.ToolStripMenuItem();
+            this.easyCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -59,8 +61,8 @@
             this.externalMode = new System.Windows.Forms.RadioButton();
             this.internalMode = new System.Windows.Forms.RadioButton();
             this.killServer = new System.Windows.Forms.Button();
-            this.window = new System.Windows.Forms.ToolStripMenuItem();
-            this.easyCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playerListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.banListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.connectionType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serverExternalPort)).BeginInit();
@@ -115,7 +117,7 @@
             // startServer
             // 
             this.startServer.Name = "startServer";
-            this.startServer.Size = new System.Drawing.Size(123, 22);
+            this.startServer.Size = new System.Drawing.Size(152, 22);
             this.startServer.Text = "Connect";
             this.startServer.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
@@ -123,7 +125,7 @@
             // 
             this.stopServer.Enabled = false;
             this.stopServer.Name = "stopServer";
-            this.stopServer.Size = new System.Drawing.Size(123, 22);
+            this.stopServer.Size = new System.Drawing.Size(152, 22);
             this.stopServer.Text = "Stop";
             this.stopServer.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
             // 
@@ -173,6 +175,26 @@
             this.Check.Size = new System.Drawing.Size(165, 22);
             this.Check.Text = "Check";
             this.Check.Click += new System.EventHandler(this.Check_Click);
+            // 
+            // window
+            // 
+            this.window.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.easyCommandsToolStripMenuItem,
+            this.playerListToolStripMenuItem,
+            this.banListToolStripMenuItem});
+            this.window.Name = "window";
+            this.window.Size = new System.Drawing.Size(66, 22);
+            this.window.Text = "Window";
+            // 
+            // easyCommandsToolStripMenuItem
+            // 
+            this.easyCommandsToolStripMenuItem.Checked = true;
+            this.easyCommandsToolStripMenuItem.CheckOnClick = true;
+            this.easyCommandsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.easyCommandsToolStripMenuItem.Name = "easyCommandsToolStripMenuItem";
+            this.easyCommandsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.easyCommandsToolStripMenuItem.Text = "Easy Commands";
+            this.easyCommandsToolStripMenuItem.Click += new System.EventHandler(this.easyCommandsToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -339,23 +361,25 @@
             this.killServer.UseVisualStyleBackColor = false;
             this.killServer.Click += new System.EventHandler(this.killServer_Click);
             // 
-            // window
+            // playerListToolStripMenuItem
             // 
-            this.window.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.easyCommandsToolStripMenuItem});
-            this.window.Name = "window";
-            this.window.Size = new System.Drawing.Size(66, 22);
-            this.window.Text = "Window";
+            this.playerListToolStripMenuItem.Checked = true;
+            this.playerListToolStripMenuItem.CheckOnClick = true;
+            this.playerListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.playerListToolStripMenuItem.Name = "playerListToolStripMenuItem";
+            this.playerListToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.playerListToolStripMenuItem.Text = "Player List";
+            this.playerListToolStripMenuItem.Click += new System.EventHandler(this.playerListToolStripMenuItem_Click);
             // 
-            // easyCommandsToolStripMenuItem
+            // banListToolStripMenuItem
             // 
-            this.easyCommandsToolStripMenuItem.Checked = true;
-            this.easyCommandsToolStripMenuItem.CheckOnClick = true;
-            this.easyCommandsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.easyCommandsToolStripMenuItem.Name = "easyCommandsToolStripMenuItem";
-            this.easyCommandsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.easyCommandsToolStripMenuItem.Text = "Easy Commands";
-            this.easyCommandsToolStripMenuItem.Click += new System.EventHandler(this.easyCommandsToolStripMenuItem_Click);
+            this.banListToolStripMenuItem.Checked = true;
+            this.banListToolStripMenuItem.CheckOnClick = true;
+            this.banListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.banListToolStripMenuItem.Name = "banListToolStripMenuItem";
+            this.banListToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.banListToolStripMenuItem.Text = "Ban List";
+            this.banListToolStripMenuItem.Click += new System.EventHandler(this.banListToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -375,7 +399,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "Form1";
             this.Text = "Simple server manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -423,6 +446,8 @@
         private System.Windows.Forms.ToolStripMenuItem Check;
         private System.Windows.Forms.ToolStripMenuItem window;
         private System.Windows.Forms.ToolStripMenuItem easyCommandsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem playerListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem banListToolStripMenuItem;
     }
 }
 

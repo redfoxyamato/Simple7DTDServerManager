@@ -97,13 +97,145 @@ namespace Simple7DTDServer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("alpha13")]
-        public string currentVirsion {
+        [global::System.Configuration.DefaultSettingValueAttribute("alpha14")]
+        public string currentVersion {
             get {
-                return ((string)(this["currentVirsion"]));
+                return ((string)(this["currentVersion"]));
             }
             set {
-                this["currentVirsion"] = value;
+                this["currentVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool autoSaveEnabled {
+            get {
+                return ((bool)(this["autoSaveEnabled"]));
+            }
+            set {
+                this["autoSaveEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool hideSAOutput {
+            get {
+                return ((bool)(this["hideSAOutput"]));
+            }
+            set {
+                this["hideSAOutput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool hideLPOutput {
+            get {
+                return ((bool)(this["hideLPOutput"]));
+            }
+            set {
+                this["hideLPOutput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int day {
+            get {
+                return ((int)(this["day"]));
+            }
+            set {
+                this["day"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int hour {
+            get {
+                return ((int)(this["hour"]));
+            }
+            set {
+                this["hour"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int autoSaveInterval {
+            get {
+                return ((int)(this["autoSaveInterval"]));
+            }
+            set {
+                this["autoSaveInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool kickMode {
+            get {
+                return ((bool)(this["kickMode"]));
+            }
+            set {
+                this["kickMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool automaticUpdate {
+            get {
+                return ((bool)(this["automaticUpdate"]));
+            }
+            set {
+                this["automaticUpdate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int updateInterval {
+            get {
+                return ((int)(this["updateInterval"]));
+            }
+            set {
+                this["updateInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int banDuration {
+            get {
+                return ((int)(this["banDuration"]));
+            }
+            set {
+                this["banDuration"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int comboBoxIndex {
+            get {
+                return ((int)(this["comboBoxIndex"]));
+            }
+            set {
+                this["comboBoxIndex"] = value;
             }
         }
     }

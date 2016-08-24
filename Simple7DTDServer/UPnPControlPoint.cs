@@ -45,10 +45,6 @@ namespace Simple7DTDServer
             {
                 service = GetService(device, "urn:upnp-org:serviceId:WANIPConn1");
             }
-            if (service == null)
-            {
-                throw new Exception("Could not find device");
-            }
             return service;
         }
         private UPnPService GetService()

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using static Simple7DTDServer.Form1;
 
 namespace Simple7DTDServer
 {
@@ -14,16 +15,46 @@ namespace Simple7DTDServer
     {
         Form1 mainForm;
 
-        public EasyCommands(Form1 main)
+        public EasyCommands(Form1 main,bool autoSaveEnabled,bool hideSAOutput,int day,int hour,int autoSaveInterval)
         {
             InitializeComponent();
             saveTimer.Stop();
+            saveTimer.Interval = autoSaveInterval * 1000;
             mainForm = main;
+            enabled.Checked = autoSaveEnabled;
+            if(enabled.Checked)
+            {
+                saveTimer.Start();
+            }
+            checkBoxHideSAOutput.Checked = hideSAOutput;
+            numericDay.Value = day;
+            numericHour.Value = hour;
+            numericAutoSaveInterval.Value = autoSaveInterval;
         }
 
         private void update_Tick(object sender, EventArgs e)
         {
-            tabControl1.Enabled = Form1.TELNET != null;
+            //TelnetConnection.SetHideSAOutput(checkBoxHideSAOutput.Checked);
+            tabControl1.Enabled = TELNET != null && TELNET.IsConnected;
+            mainForm.setEasyCommandsSettings(enabled.Checked, checkBoxHideSAOutput.Checked, (int)numericDay.Value, (int)numericHour.Value, (int)numericAutoSaveInterval.Value);
+            TranslateComponents();
+        }
+
+        private void TranslateComponents()
+        {
+            tabPage1.Text = translateTo("tabpage.chat");
+            tabPage2.Text = translateTo("tabpage.save");
+            tabPage3.Text = translateTo("tabpage.time");
+            serverMessage.Text = translateTo("chat.message");
+            say.Text = translateTo("chat.say");
+            enabled.Text = translateTo("save.enabled");
+            label1.Text = translateTo("playerlist.seconds");
+            checkBoxHideSAOutput.Text = translateTo("save.hideSA");
+            save.Text = translateTo("save.manual");
+            groupBox1.Text = translateTo("tabpage.time");
+            label2.Text = translateTo("time.day");
+            label3.Text = translateTo("time.oclock");
+            button1.Text = translateTo("time.change");
         }
 
         private void EasyCommands_FormClosing(object sender, FormClosingEventArgs e)
@@ -34,22 +65,28 @@ namespace Simple7DTDServer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(message.Text == "")
+            if (TELNET != null && TELNET.IsConnected)
             {
-                return;
+                if (message.Text == "")
+                {
+                    return;
+                }
+                string str = message.Text;
+                if (str.Contains(" "))
+                {
+                    str = string.Format("{0}{1}{0}", "\"", str);
+                }
+                TELNET.AddSendingCue("say " + message.Text);
+                message.Text = "";
             }
-            string str = message.Text;
-            if(str.Contains(" "))
-            {
-                str = string.Format("{0}{1}{0}","\"",str);
-            }
-            Form1.TELNET.WriteLine("say " + message.Text,true);
-            message.Text = "";
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            Form1.TELNET.WriteLine("sa",true);
+            if (TELNET != null && TELNET.IsConnected)
+            {
+                TELNET.AddSendingCue("sa");
+            }
         }
 
         private void enabled_CheckedChanged(object sender, EventArgs e)
@@ -60,7 +97,7 @@ namespace Simple7DTDServer
         public void setAutoSaveEnabled(bool b)
         {
             enabled.Checked = b;
-            numericUpDown1.Enabled = b;
+            numericAutoSaveInterval.Enabled = b;
             if(!b)
             {
                 saveTimer.Stop();
@@ -73,15 +110,34 @@ namespace Simple7DTDServer
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            saveTimer.Interval = (int)numericUpDown1.Value * 1000;
+            saveTimer.Interval = (int)numericAutoSaveInterval.Value * 1000;
         }
 
         private void saveTimer_Tick(object sender, EventArgs e)
         {
-            if(Form1.TELNET != null)
+            if(TELNET != null && TELNET.IsConnected)
             {
-                Form1.TELNET.WriteLine("sa",false);
+                TELNET.AddSendingCue("sa");
             }
+        }
+
+        private void button1_Click_2(object sender, EventArgs e)
+        {
+            int time = (int)(numericDay.Value - 1) * 24000 + (int)numericHour.Value * 1000;
+            if (TELNET != null && TELNET.IsConnected)
+            {
+                TELNET.AddSendingCue("settime " + time);
+            }
+        }
+
+        private void checkBoxHideSAOutput_CheckedChanged(object sender, EventArgs e)
+        {
+            TelnetConnection.SetHideSAOutput(checkBoxHideSAOutput.Checked);
+        }
+
+        private void EasyCommands_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

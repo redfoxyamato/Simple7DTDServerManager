@@ -8,15 +8,23 @@ using System.Xml;
 using System.Text;
 using Simple7DTDServer.Properties;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Simple7DTDServer
 {
     public partial class Form1 : Form
     {
-        private static string extIP,baseDir,gameExe,serverCfg;
+        private static string extIP,baseDir,gameExe,serverCfg,serveradmin,current_version;
         public static int serverPort,telnetPort;
         private static bool hasServerStarted;
         private static bool portWarning;
+
+        private bool autoSave,hideSA;
+        private int day, hour, saveInterval;
+
+        private bool kickMode, autoUpdate, hideLP;
+        private int updateInterval, banDuration, comboBoxIndex;
 
         private static string language = "English";
 
@@ -27,6 +35,8 @@ namespace Simple7DTDServer
         private static LanguageSelector langSelector;
         private static Config_Editor editor;
         private static EasyCommands commands;
+        private static BanList banList;
+        private static PlayerList playerList;
         private static string mainFolder;
 
         private static bool isServerPortOpening;
@@ -36,9 +46,26 @@ namespace Simple7DTDServer
             get { return tel; }
         }
 
+        public static bool isConnectedToServer
+        {
+            get { return tel == null ? false : tel.IsConnected; }
+        }
+
+        public static Form1 INSTANCE
+        {
+            get { return instance; }
+        }
+        private static Form1 instance;
+
+        public static string SERVERADMIN
+        {
+            get { return serveradmin; }
+        }
+
         public Form1()
         {
             InitializeComponent();
+            instance = this;
             extIP = "";
             connectCheck.Stop();
             timerServerUpdate.Stop();
@@ -48,10 +75,18 @@ namespace Simple7DTDServer
         {
             getSetting();
             setLanguage(settings.language);
-            langSelector = new LanguageSelector(this,language);
+            langSelector = new LanguageSelector(this, language);
             AddOwnedForm(langSelector);
+
+            TelnetConnection.SetHideLPOutput(hideLP);
+            TelnetConnection.SetHideSAOutput(hideSA);
+
+            commands = new EasyCommands(this,autoSave,hideSA,day,hour,saveInterval);
+            commands.Show();
+
             translateComponents();
-            MessageBox.Show(translateTo("autoDetectGame"));
+
+            //MessageBox.Show(translateTo("autoDetectGame"));
             baseDir = @"C:\Program Files (x86)\Steam\steamapps\common\7 Days to Die";
             if (!Directory.Exists(baseDir))
             {
@@ -64,30 +99,37 @@ namespace Simple7DTDServer
                 MessageBox.Show(translateTo("cantFoundServerCfg"));
                 Close();
             }
-            gameExe = @"C:\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie.exe";
-            if(!File.Exists(gameExe))
+            serveradmin = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\7DaysToDie\Saves\serveradmin.xml";
+            if(!File.Exists(serveradmin))
             {
-                MessageBox.Show(translateTo("cantFoundGame"));
+                MessageBox.Show("serveradmin.cfg couldn't find. Try start up server once.");
                 Close();
             }
-            if(getNode("TelnetEnabled") !="true")
+
+            banList = new BanList();
+            banList.Show();
+
+            playerList = new PlayerList(kickMode, autoUpdate, hideLP, updateInterval, banDuration, comboBoxIndex);
+            playerList.Show();
+
+            gameExe = baseDir + "\\7DaysToDie.exe";
+            Console.WriteLine(gameExe);
+            if (getNode("TelnetEnabled") != "true")
             {
                 MessageBox.Show(translateTo("cantUseTelnet"));
                 Close();
             }
             externalIP.Text = settings.extServerIP;
             serverExternalPort.Value = settings.extServerPort;
+            /*
             if (UPnPControlPoint.isUPnPEnabled())
             {
                 MessageBox.Show(translateTo("getGlobalIP"));
                 extIP = "RETRIEVING";
                 getLocalHostName();
             }
-            else if(isInternetConnected())
-            {
-                MessageBox.Show("upnpNotAvailable");
-                extIP = new WebClient().DownloadString("http://redfox32.info/ip.php");
-            }
+            */
+            //extIP = new WebClient().DownloadString("http://redfox32.info/ip.php");
             if (settings.extServer)
             {
                 internalMode.Checked = false;
@@ -97,15 +139,37 @@ namespace Simple7DTDServer
                 serverInfomation.Enabled = false;
             }
             autoMapServer.Checked = settings.serverAutoMapping;
-            
+
             portWarning = settings.portWarning;
             serverPort = getPort();
             telnetPort = getTelnetPort();
             killServerProcesses();
             test();
             mainFolder = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
-            commands = new EasyCommands(this);
-            commands.Show();
+        }
+
+        public void setEasyCommandsSettings(bool autoSaveEnabled, bool hideSAOutput, int days, int hours,int autoSaveInterval)
+        {
+            autoSave = autoSaveEnabled;
+            hideSA = hideSAOutput;
+            day = days;
+            hour = hours;
+            saveInterval = autoSaveInterval;
+        }
+
+        public void SetPlayerListSettings(bool isKickMode, bool automaticUpdate, bool hideLPOutput, int updateInterval, int banDuration, int comboBoxIndex)
+        {
+            kickMode = isKickMode;
+            autoUpdate = automaticUpdate;
+            hideLP = hideLPOutput;
+            this.updateInterval = updateInterval;
+            this.banDuration = banDuration;
+            this.comboBoxIndex = comboBoxIndex;
+        }
+
+        public void SetCurrentVersion(string currentVersion)
+        {
+            current_version = currentVersion;
         }
 
         private Settings getSetting()
@@ -115,7 +179,46 @@ namespace Simple7DTDServer
                 return settings;
             }
             settings = Settings.Default;
+            current_version = settings.currentVersion;
+            autoSave = settings.autoSaveEnabled;
+            hideSA = settings.hideSAOutput;
+            day = settings.day;
+            hour = settings.hour;
+            saveInterval = settings.autoSaveInterval;
+
+            kickMode = settings.kickMode;
+            autoUpdate = settings.automaticUpdate;
+            hideLP = settings.hideLPOutput;
+            updateInterval = settings.updateInterval;
+            banDuration = settings.banDuration;
+            comboBoxIndex = settings.comboBoxIndex;
             return settings;
+        }
+
+        private void saveSettings()
+        {
+            settings.language = language;
+            settings.extServer = externalMode.Checked;
+            settings.extServerIP = externalIP.Text;
+            settings.extServerPort = (int)serverExternalPort.Value;
+            settings.portWarning = portWarning;
+            settings.serverAutoMapping = autoMapServer.Checked;
+            settings.currentVersion = current_version;
+
+            settings.autoSaveEnabled = autoSave;
+            settings.hideSAOutput = hideSA;
+            settings.day = day;
+            settings.hour = hour;
+            settings.autoSaveInterval = saveInterval;
+
+            settings.kickMode = kickMode;
+            settings.automaticUpdate = autoUpdate;
+            settings.hideLPOutput = hideLP;
+            settings.updateInterval = updateInterval;
+            settings.banDuration = banDuration;
+            settings.comboBoxIndex = comboBoxIndex;
+
+            settings.Save();
         }
 
         private static void killServerProcesses()
@@ -131,7 +234,6 @@ namespace Simple7DTDServer
                 }
             }
         }
-
         private static bool IsFileLocked(string path)
         {
             FileStream stream = null;
@@ -176,6 +278,7 @@ namespace Simple7DTDServer
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = name;
             info.Arguments = string.Format("-quit -logfile {0}\\logs\\output_log_{1} -batchmode -nographics -configfile=serverconfig.xml -dedicated",Application.StartupPath,getTimeStanp());
+            Console.WriteLine("GameExe:{0}",gameExe);
             p = Process.Start(info);
             p.WaitForInputIdle();
         }
@@ -199,31 +302,45 @@ namespace Simple7DTDServer
             {
                 name = serverCfg;
             }
-            if (IsFileLocked(name))
+            FileStream fs = null;
+            try
             {
-                hasServerStarted = false;
-                if(p != null)
+                fs = new FileStream(name, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            }
+            catch
+            {
+                if (fs != null)
                 {
-                    p.Kill();
+                    fs.Close();
                 }
                 return "";
             }
-            XmlTextReader reader = new XmlTextReader(new StreamReader(name,Encoding.UTF8));
-            while(reader.Read())
+            XmlTextReader reader = null;
+            try
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                reader = new XmlTextReader(new StreamReader(fs));
+                while (reader.Read())
                 {
-                    if(reader.MoveToFirstAttribute())
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        if(reader.Value == node_name && reader.MoveToNextAttribute())
+                        if (reader.MoveToFirstAttribute())
                         {
-                            ret = reader.Value;
-                            break;
+                            if (reader.Value == node_name && reader.MoveToNextAttribute())
+                            {
+                                ret = reader.Value;
+                                break;
+                            }
                         }
                     }
                 }
             }
-            reader.Close();
+            finally
+            {
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
             return ret;
         }
         public static string getLanguageFile()
@@ -280,7 +397,7 @@ namespace Simple7DTDServer
         private void openPort(int port, string description)
         {
             textBox1.Text += translateTo("openPort") + ":" + port + "\r\n";
-            new Thread(() =>
+            Task.Factory.StartNew(() =>
             {
                 UPnPControlPoint upnp = new UPnPControlPoint();
                 if (upnp.AddPortMapping((ushort)port, description))
@@ -296,13 +413,13 @@ namespace Simple7DTDServer
                     Console.WriteLine("Portmapping failed.");
                     MessageBox.Show(translateTo("failedPortOpen"));
                 }
-            }).Start();
+            });
         }
 
         private void closePort(int port)
         {
             textBox1.Text += translateTo("closePort") + ":" + port + "\r\n";
-            new Thread(() =>
+            Task.Factory.StartNew(() =>
             {
                 UPnPControlPoint upnp = new UPnPControlPoint();
 
@@ -320,7 +437,7 @@ namespace Simple7DTDServer
                     Console.WriteLine("Portmapping failed.");
                     MessageBox.Show(translateTo("failedPortClose"));
                 }
-            }).Start();
+            });
         }
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -367,7 +484,7 @@ namespace Simple7DTDServer
                 hasServerStarted = false;
                 if (getIsConnected())
                 {
-                    tel.WriteLine("shutdown",false);
+                    tel.AddSendingCue("shutdown");
                 }
             }
         }
@@ -432,7 +549,6 @@ namespace Simple7DTDServer
             string translated = getNode(str,path);
             if(translated != "")
             {
-                Console.WriteLine(translated);
                 return translated;
             }
             return str;
@@ -467,7 +583,7 @@ namespace Simple7DTDServer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            tel.WriteLine(textBox2.Text,false);
+            tel.AddSendingCue(textBox2.Text);
             textBox2.Text = "";
         }
 
@@ -475,7 +591,7 @@ namespace Simple7DTDServer
         {
             if(!p.HasExited && getIsConnected())
             {
-                new Thread(() =>
+                Task.Factory.StartNew(() =>
                 {
                     string ret = tel.Read();
                     this.Invoke((MethodInvoker)delegate ()
@@ -483,7 +599,7 @@ namespace Simple7DTDServer
                         textBox1.AppendText(ret);
                         textBox1.SelectionStart = textBox1.Text.Length - 1;
                     });
-                }).Start();
+                });
             }
             else
             {
@@ -504,21 +620,9 @@ namespace Simple7DTDServer
         {
             if (isServerPortOpening)
             {
-                MessageBox.Show(translateTo("closeServerPort"));
                 closePort(serverPort);
                 isServerPortOpening = false;
             }
-        }
-
-        private void saveSettings()
-        {
-            settings.language = language;
-            settings.extServer = externalMode.Checked;
-            settings.extServerIP = externalIP.Text;
-            settings.extServerPort = (int)serverExternalPort.Value;
-            settings.portWarning = portWarning;
-            settings.serverAutoMapping = autoMapServer.Checked;
-            settings.Save();
         }
 
         private bool isInternetConnected()
@@ -528,7 +632,7 @@ namespace Simple7DTDServer
 
         private void manageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            editor = new Config_Editor(language,mainFolder+@"lang\settings\",serverCfg);
+            editor = new Config_Editor(language,mainFolder+@"lang\settings\",serverCfg,current_version);
             AddOwnedForm(editor);
             editor.ShowDialog();
             editor = null;
@@ -586,7 +690,7 @@ namespace Simple7DTDServer
 
         private void Check_Click(object sender, EventArgs e)
         {
-            new Thread(() =>
+            Task.Factory.StartNew(() =>
             {
                 MessageBox.Show(isPortOpen(serverPort) ? translateTo("portOpening") : translateTo("portClosing"));
 
@@ -606,7 +710,7 @@ namespace Simple7DTDServer
         {
             if(p != null && tel != null && tel.IsConnected)
             {
-                tel.WriteLine("shutdown",false);
+                tel.WriteLine("shutdown");
             }
             ClosePorts();
             saveSettings();
@@ -629,7 +733,7 @@ namespace Simple7DTDServer
         {
             try
             {
-                new Thread(() =>
+                Task.Factory.StartNew(() =>
                 {
                     UPnPControlPoint p = new UPnPControlPoint();
                     var result = p.GetExternalIPAddress();
@@ -643,12 +747,41 @@ namespace Simple7DTDServer
                         MessageBox.Show(translateTo("successGetGlobalIP"));
                         extIP = result;
                     }
-                }).Start();
+                });
             }
             catch
             {
             }
         }
+
+        private void playerListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetPlayerListVisible(playerListToolStripMenuItem.Checked);
+        }
+
+        public static void SetBanListVisible(bool flag)
+        {
+            if (instance != null && banList != null)
+            {
+                banList.Visible = flag;
+                instance.banListToolStripMenuItem.Checked = flag;
+            }
+        }
+
+        public static void SetPlayerListVisible(bool flag)
+        {
+            if (instance != null && playerList != null)
+            {
+                playerList.Visible = flag;
+                instance.playerListToolStripMenuItem.Checked = flag;
+            }
+        }
+
+        private void banListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetBanListVisible(banListToolStripMenuItem.Checked);
+        }
+
         private void test()
         {
         }

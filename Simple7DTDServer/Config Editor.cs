@@ -13,16 +13,17 @@ namespace Simple7DTDServer
 {
     public partial class Config_Editor : Form
     {
-        string lang,lang_path,conf_path;
+        string lang,lang_path,conf_path,current_version;
         List<Information> infos = new List<Information>();
         List<Setting> settings = new List<Setting>();
 
-        public Config_Editor(string language, string language_path, string config_path)
+        public Config_Editor(string language, string language_path, string config_path,string currentVersion)
         {
             InitializeComponent();
             lang = language;
             lang_path = language_path;
             conf_path = config_path;
+            current_version = currentVersion;
             parseSettingFromFile();
         }
 
@@ -54,9 +55,8 @@ namespace Simple7DTDServer
             if(settings.Count != infos.Count)
             {
                 listBox1.Items.Clear();
-                settings = new List<Setting>();
                 infos = new List<Information>();
-                MessageBox.Show(Form1.translateTo("invalid_cfg"));
+                MessageBox.Show(Form1.translateTo("invalidCfg"));
                 listBox1.SelectedIndex = -1;
             }
         }
@@ -67,6 +67,13 @@ namespace Simple7DTDServer
             foreach(string file in files)
             {
                 comboBox1.Items.Add(Path.GetFileName(file).Split(new char[] { '_' })[0]);
+            }
+            for(int i = 0;i < comboBox1.Items.Count;i++)
+            {
+                if(comboBox1.Items[i].ToString() == current_version)
+                {
+                    comboBox1.SelectedIndex = i;
+                }
             }
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -98,26 +105,30 @@ namespace Simple7DTDServer
 
         private void apply_Click(object sender, EventArgs e)
         {
-            string str = string.Format("<?xml version={0}1.0{0}?>\r\n\t<ServerSettings>\n", "\"");
-            for(int i = 0;i < settings.Count - 1;i++)
+            if (infos.Count > 0 && comboBox1.SelectedItem != null)
             {
-                Setting set = settings[i];
-                Information info = infos[i];
-                str += string.Format("\t\t<property name={0}{1}{0} value={0}{2}{0} /> <!-- {3} -->\n","\"",set.id,set.value,getOriginalDesc(set.id).Replace("\\n"," "));
-            }
-            {
-                int index = settings.Count - 1;
-                if(settings[index].value != "")
+                string str = string.Format("<?xml version={0}1.0{0}?>\r\n\t<ServerSettings>\n", "\"");
+                for (int i = 0; i < settings.Count - 1; i++)
                 {
-                    str += string.Format("\t\t<property name={0}SaveGameFolder{0} value={0}{1}{0} /> <!-- {2} -->\n", "\"", settings[index].value, getOriginalDesc("SaveGameFolder").Replace("\\n", " "));
+                    Setting set = settings[i];
+                    Information info = infos[i];
+                    str += string.Format("\t\t<property name={0}{1}{0} value={0}{2}{0} /> <!-- {3} -->\n", "\"", set.id, set.value, getOriginalDesc(set.id).Replace("\\n", " "));
                 }
-                else
                 {
-                    str += string.Format("\t\t<!--property name={0}SaveGameFolder{0}      value={0}absolute path{0} /-->	<!-- {1} -->\n","\"",getOriginalDesc("SaveGameFolder").Replace("\\n", " "));
+                    int index = settings.Count - 1;
+                    if (settings[index].value != "")
+                    {
+                        str += string.Format("\t\t<property name={0}SaveGameFolder{0} value={0}{1}{0} /> <!-- {2} -->\n", "\"", settings[index].value, getOriginalDesc("SaveGameFolder").Replace("\\n", " "));
+                    }
+                    else
+                    {
+                        str += string.Format("\t\t<!--property name={0}SaveGameFolder{0}      value={0}absolute path{0} /-->	<!-- {1} -->\n", "\"", getOriginalDesc("SaveGameFolder").Replace("\\n", " "));
+                    }
                 }
+                str += "</ServerSettings>";
+                File.WriteAllText(conf_path, str);
+                ((Form1)Owner).SetCurrentVersion(comboBox1.SelectedItem.ToString());
             }
-            str += "</ServerSettings>";
-            File.WriteAllText(conf_path,str);
             Close();
         }
 
@@ -292,7 +303,8 @@ namespace Simple7DTDServer
             XmlTextReader reader = null;
             try
             {
-                reader = new XmlTextReader(new StreamReader(p, Encoding.UTF8));
+                FileStream fs = new FileStream(p, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                reader = new XmlTextReader(new StreamReader(fs));
                 while (reader.Read())
                 {
                     if (reader.NodeType == XmlNodeType.Element)
@@ -422,7 +434,10 @@ namespace Simple7DTDServer
                 case Type.STRING:
                     {
                         textBox1.Enabled = true;
-                        textBox1.Text = value;
+                        if (value != "false")
+                        {
+                            textBox1.Text = value;
+                        }
                         return;
                     }
                 case Type.SELECT:
@@ -457,7 +472,7 @@ namespace Simple7DTDServer
         private bool isThereSavePath()
         {
             Setting set = getSettingFromID("SaveGameFolder");
-            return set != null && set.value != "";
+            return set != null;
         }
         private Setting getSettingFromID(string id)
         {
