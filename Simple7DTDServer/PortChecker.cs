@@ -9,26 +9,19 @@ namespace Simple7DTDServer
 {
     public class PortChecker
     {
-        public static bool isOpen(string binPath,int port)
+        public static bool isOpen(int port)
         {
-            {
-                ProcessStartInfo info = new ProcessStartInfo();
-                info.FileName = binPath + "TCPServer.exe";
-                info.Arguments = port.ToString();
-                info.WorkingDirectory = binPath;
-                info.UseShellExecute = false;
-                info.CreateNoWindow = true;
-                Process p = Process.Start(info);
-            }
+            TCPServer server = new TCPServer(port);
+            server.Start();
+            bool flag = false;
             try
             {
                 string phpContent = new WebClient().DownloadString("http://pomepome.link/port.php?port=" + port);
-                return phpContent.Contains("開いています");
+                flag = phpContent.Contains("開いています");
             }
-            catch
-            {
-                return false;
-            }
+            catch { }
+            server.Stop();
+            return flag;
         }
     }
 }

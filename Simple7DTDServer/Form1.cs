@@ -676,13 +676,7 @@ namespace Simple7DTDServer
         }
         public static bool isPortOpen(int port)
         {
-            if (!File.Exists("bin/TCPServer.exe"))
-            {
-                MessageBox.Show(translateTo("notEnoughFile"));
-                return false;
-            }
-            string binPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\bin\";
-            return PortChecker.isOpen(binPath,port);
+            return PortChecker.isOpen(port);
         }
         private void connect_Click(object sender, EventArgs e)
         {
