@@ -48,21 +48,22 @@
             this.columnPing = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.update = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButtonKick = new System.Windows.Forms.RadioButton();
-            this.radioButtonBan = new System.Windows.Forms.RadioButton();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxReason = new System.Windows.Forms.TextBox();
             this.buttonExecute = new System.Windows.Forms.Button();
+            this.textBoxReason = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.radioButtonBan = new System.Windows.Forms.RadioButton();
+            this.radioButtonKick = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.numericUpdate = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.checkBoxAutomatic = new System.Windows.Forms.CheckBox();
+            this.checkBoxHideLPOutput = new System.Windows.Forms.CheckBox();
             this.buttonUpdate = new System.Windows.Forms.Button();
+            this.checkBoxAutomatic = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.numericUpdate = new System.Windows.Forms.NumericUpDown();
             this.timerAutomatic = new System.Windows.Forms.Timer(this.components);
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.numericDuration = new System.Windows.Forms.NumericUpDown();
             this.comboBoxTimeUnit = new System.Windows.Forms.ComboBox();
-            this.checkBoxHideLPOutput = new System.Windows.Forms.CheckBox();
+            this.numericDuration = new System.Windows.Forms.NumericUpDown();
+            this.columnKDRatio = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpdate)).BeginInit();
@@ -84,6 +85,7 @@
             this.columnDeaths,
             this.columnZombieKills,
             this.columnPlayerKills,
+            this.columnKDRatio,
             this.columnScore,
             this.columnLevel,
             this.columnSteamID,
@@ -104,6 +106,7 @@
             // columnHeaderID
             // 
             this.columnHeaderID.Text = "ID";
+            this.columnHeaderID.Width = 40;
             // 
             // columnPlayerID
             // 
@@ -188,6 +191,42 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Kick/Ban";
             // 
+            // buttonExecute
+            // 
+            this.buttonExecute.Location = new System.Drawing.Point(94, 39);
+            this.buttonExecute.Name = "buttonExecute";
+            this.buttonExecute.Size = new System.Drawing.Size(75, 23);
+            this.buttonExecute.TabIndex = 4;
+            this.buttonExecute.Text = "Execute";
+            this.buttonExecute.UseVisualStyleBackColor = true;
+            this.buttonExecute.Click += new System.EventHandler(this.buttonExecute_Click);
+            // 
+            // textBoxReason
+            // 
+            this.textBoxReason.Location = new System.Drawing.Point(9, 81);
+            this.textBoxReason.Name = "textBoxReason";
+            this.textBoxReason.Size = new System.Drawing.Size(171, 19);
+            this.textBoxReason.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 65);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 12);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "reason";
+            // 
+            // radioButtonBan
+            // 
+            this.radioButtonBan.AutoSize = true;
+            this.radioButtonBan.Location = new System.Drawing.Point(7, 42);
+            this.radioButtonBan.Name = "radioButtonBan";
+            this.radioButtonBan.Size = new System.Drawing.Size(43, 16);
+            this.radioButtonBan.TabIndex = 1;
+            this.radioButtonBan.Text = "Ban";
+            this.radioButtonBan.UseVisualStyleBackColor = true;
+            // 
             // radioButtonKick
             // 
             this.radioButtonKick.AutoSize = true;
@@ -200,42 +239,6 @@
             this.radioButtonKick.Text = "Kick";
             this.radioButtonKick.UseVisualStyleBackColor = true;
             // 
-            // radioButtonBan
-            // 
-            this.radioButtonBan.AutoSize = true;
-            this.radioButtonBan.Location = new System.Drawing.Point(7, 42);
-            this.radioButtonBan.Name = "radioButtonBan";
-            this.radioButtonBan.Size = new System.Drawing.Size(43, 16);
-            this.radioButtonBan.TabIndex = 1;
-            this.radioButtonBan.Text = "Ban";
-            this.radioButtonBan.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 65);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 12);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "reason";
-            // 
-            // textBoxReason
-            // 
-            this.textBoxReason.Location = new System.Drawing.Point(9, 81);
-            this.textBoxReason.Name = "textBoxReason";
-            this.textBoxReason.Size = new System.Drawing.Size(171, 19);
-            this.textBoxReason.TabIndex = 3;
-            // 
-            // buttonExecute
-            // 
-            this.buttonExecute.Location = new System.Drawing.Point(94, 39);
-            this.buttonExecute.Name = "buttonExecute";
-            this.buttonExecute.Size = new System.Drawing.Size(75, 23);
-            this.buttonExecute.TabIndex = 4;
-            this.buttonExecute.Text = "Execute";
-            this.buttonExecute.UseVisualStyleBackColor = true;
-            this.buttonExecute.Click += new System.EventHandler(this.buttonExecute_Click);
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.checkBoxHideLPOutput);
@@ -245,42 +248,31 @@
             this.groupBox2.Controls.Add(this.numericUpdate);
             this.groupBox2.Location = new System.Drawing.Point(436, 149);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(296, 100);
+            this.groupBox2.Size = new System.Drawing.Size(270, 100);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Update";
             // 
-            // numericUpdate
+            // checkBoxHideLPOutput
             // 
-            this.numericUpdate.Location = new System.Drawing.Point(9, 45);
-            this.numericUpdate.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.numericUpdate.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpdate.Name = "numericUpdate";
-            this.numericUpdate.Size = new System.Drawing.Size(120, 19);
-            this.numericUpdate.TabIndex = 0;
-            this.numericUpdate.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpdate.ValueChanged += new System.EventHandler(this.numericUpdate_ValueChanged);
+            this.checkBoxHideLPOutput.AutoSize = true;
+            this.checkBoxHideLPOutput.Location = new System.Drawing.Point(156, 23);
+            this.checkBoxHideLPOutput.Name = "checkBoxHideLPOutput";
+            this.checkBoxHideLPOutput.Size = new System.Drawing.Size(100, 16);
+            this.checkBoxHideLPOutput.TabIndex = 4;
+            this.checkBoxHideLPOutput.Text = "Hide \'lp\' output";
+            this.checkBoxHideLPOutput.UseVisualStyleBackColor = true;
+            this.checkBoxHideLPOutput.CheckedChanged += new System.EventHandler(this.checkBoxHideLPOutput_CheckedChanged);
             // 
-            // label2
+            // buttonUpdate
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(135, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(11, 12);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "s";
+            this.buttonUpdate.Location = new System.Drawing.Point(9, 71);
+            this.buttonUpdate.Name = "buttonUpdate";
+            this.buttonUpdate.Size = new System.Drawing.Size(137, 23);
+            this.buttonUpdate.TabIndex = 3;
+            this.buttonUpdate.Text = "Manual Update";
+            this.buttonUpdate.UseVisualStyleBackColor = true;
+            this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
             // 
             // checkBoxAutomatic
             // 
@@ -293,15 +285,43 @@
             this.checkBoxAutomatic.UseVisualStyleBackColor = true;
             this.checkBoxAutomatic.CheckedChanged += new System.EventHandler(this.checkBoxAutomatic_CheckedChanged);
             // 
-            // buttonUpdate
+            // label2
             // 
-            this.buttonUpdate.Location = new System.Drawing.Point(9, 71);
-            this.buttonUpdate.Name = "buttonUpdate";
-            this.buttonUpdate.Size = new System.Drawing.Size(137, 23);
-            this.buttonUpdate.TabIndex = 3;
-            this.buttonUpdate.Text = "Manual Update";
-            this.buttonUpdate.UseVisualStyleBackColor = true;
-            this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(135, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(11, 12);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "s";
+            // 
+            // numericUpdate
+            // 
+            this.numericUpdate.DecimalPlaces = 1;
+            this.numericUpdate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpdate.Location = new System.Drawing.Point(9, 45);
+            this.numericUpdate.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numericUpdate.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.numericUpdate.Name = "numericUpdate";
+            this.numericUpdate.Size = new System.Drawing.Size(120, 19);
+            this.numericUpdate.TabIndex = 0;
+            this.numericUpdate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpdate.ValueChanged += new System.EventHandler(this.numericUpdate_ValueChanged);
             // 
             // timerAutomatic
             // 
@@ -318,6 +338,21 @@
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Ban Duration";
+            // 
+            // comboBoxTimeUnit
+            // 
+            this.comboBoxTimeUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTimeUnit.FormattingEnabled = true;
+            this.comboBoxTimeUnit.Items.AddRange(new object[] {
+            "minute(s)",
+            "hour(s)",
+            "day(s)",
+            "month(s)",
+            "year(s)"});
+            this.comboBoxTimeUnit.Location = new System.Drawing.Point(7, 45);
+            this.comboBoxTimeUnit.Name = "comboBoxTimeUnit";
+            this.comboBoxTimeUnit.Size = new System.Drawing.Size(121, 20);
+            this.comboBoxTimeUnit.TabIndex = 1;
             // 
             // numericDuration
             // 
@@ -341,37 +376,16 @@
             0,
             0});
             // 
-            // comboBoxTimeUnit
+            // columnKDRatio
             // 
-            this.comboBoxTimeUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxTimeUnit.FormattingEnabled = true;
-            this.comboBoxTimeUnit.Items.AddRange(new object[] {
-            "minute(s)",
-            "hour(s)",
-            "day(s)",
-            "month(s)",
-            "year(s)"});
-            this.comboBoxTimeUnit.Location = new System.Drawing.Point(7, 45);
-            this.comboBoxTimeUnit.Name = "comboBoxTimeUnit";
-            this.comboBoxTimeUnit.Size = new System.Drawing.Size(121, 20);
-            this.comboBoxTimeUnit.TabIndex = 1;
-            // 
-            // checkBoxHideLPOutput
-            // 
-            this.checkBoxHideLPOutput.AutoSize = true;
-            this.checkBoxHideLPOutput.Location = new System.Drawing.Point(156, 23);
-            this.checkBoxHideLPOutput.Name = "checkBoxHideLPOutput";
-            this.checkBoxHideLPOutput.Size = new System.Drawing.Size(100, 16);
-            this.checkBoxHideLPOutput.TabIndex = 4;
-            this.checkBoxHideLPOutput.Text = "Hide \'lp\' output";
-            this.checkBoxHideLPOutput.UseVisualStyleBackColor = true;
-            this.checkBoxHideLPOutput.CheckedChanged += new System.EventHandler(this.checkBoxHideLPOutput_CheckedChanged);
+            this.columnKDRatio.Text = "K/D ratio";
+            this.columnKDRatio.Width = 70;
             // 
             // PlayerList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(744, 351);
+            this.ClientSize = new System.Drawing.Size(728, 351);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -429,5 +443,6 @@
         private System.Windows.Forms.ComboBox comboBoxTimeUnit;
         private System.Windows.Forms.NumericUpDown numericDuration;
         private System.Windows.Forms.CheckBox checkBoxHideLPOutput;
+        private System.Windows.Forms.ColumnHeader columnKDRatio;
     }
 }

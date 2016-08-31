@@ -15,18 +15,18 @@ namespace Simple7DTDServer
     {
         Form1 mainForm;
 
-        public EasyCommands(Form1 main,bool autoSaveEnabled,bool hideSAOutput,int day,int hour,int autoSaveInterval)
+        public EasyCommands(Form1 main,bool autoSaveEnabled,int day,int hour,int autoSaveInterval,bool hideSAOutput)
         {
             InitializeComponent();
             saveTimer.Stop();
             saveTimer.Interval = autoSaveInterval * 1000;
             mainForm = main;
             enabled.Checked = autoSaveEnabled;
+            checkBoxHideSAOutput.Checked = hideSAOutput;
             if(enabled.Checked)
             {
                 saveTimer.Start();
             }
-            checkBoxHideSAOutput.Checked = hideSAOutput;
             numericDay.Value = day;
             numericHour.Value = hour;
             numericAutoSaveInterval.Value = autoSaveInterval;
@@ -36,7 +36,7 @@ namespace Simple7DTDServer
         {
             //TelnetConnection.SetHideSAOutput(checkBoxHideSAOutput.Checked);
             tabControl1.Enabled = TELNET != null && TELNET.IsConnected;
-            mainForm.setEasyCommandsSettings(enabled.Checked, checkBoxHideSAOutput.Checked, (int)numericDay.Value, (int)numericHour.Value, (int)numericAutoSaveInterval.Value);
+            mainForm.setEasyCommandsSettings(enabled.Checked, (int)numericDay.Value, (int)numericHour.Value, (int)numericAutoSaveInterval.Value, checkBoxHideSAOutput.Checked);
             TranslateComponents();
         }
 

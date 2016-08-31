@@ -116,7 +116,7 @@ namespace Simple7DTDServer
                 }
                 {
                     int index = settings.Count - 1;
-                    if (settings[index].value != "")
+                    if (settings[index].value != "false" && settings[index].value != "")
                     {
                         str += string.Format("\t\t<property name={0}SaveGameFolder{0} value={0}{1}{0} /> <!-- {2} -->\n", "\"", settings[index].value, getOriginalDesc("SaveGameFolder").Replace("\\n", " "));
                     }

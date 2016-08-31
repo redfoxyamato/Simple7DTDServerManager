@@ -8,10 +8,8 @@ c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDSer
 c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.pdb
 c:\users\yo\documents\visual studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Simple7DTDServer.exe.config
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.LanguageSelector.resources
-C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Interop.UPNPLib.dll
-C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.csproj.ResolveComReference.cache
-C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Interop.NATUPNPLib.dll
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.Config_Editor.resources
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.EasyCommands.resources
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.BanList.resources
 C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\obj\Debug\Simple7DTDServer.PlayerList.resources
+C:\Users\yo\Documents\Visual Studio 2015\Projects\Simple7DTDServer\Simple7DTDServer\bin\Debug\Mono.Nat.dll

@@ -1,0 +1,9 @@
+﻿<Properties StartupItem="Simple7DTDServer.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.ItemProperties.Simple7DTDServer PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>

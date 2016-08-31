@@ -43,8 +43,11 @@
             this.portMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.autoMapServer = new System.Windows.Forms.ToolStripMenuItem();
             this.Check = new System.Windows.Forms.ToolStripMenuItem();
+            this.reToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.window = new System.Windows.Forms.ToolStripMenuItem();
             this.easyCommandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playerListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.banListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -61,8 +64,8 @@
             this.externalMode = new System.Windows.Forms.RadioButton();
             this.internalMode = new System.Windows.Forms.RadioButton();
             this.killServer = new System.Windows.Forms.Button();
-            this.playerListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.banListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.getExternalIP = new System.Windows.Forms.Timer(this.components);
+            this.openWindow = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.connectionType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serverExternalPort)).BeginInit();
@@ -141,14 +144,14 @@
             // manager
             // 
             this.manager.Name = "manager";
-            this.manager.Size = new System.Drawing.Size(132, 22);
+            this.manager.Size = new System.Drawing.Size(152, 22);
             this.manager.Text = "Manager";
             this.manager.Click += new System.EventHandler(this.manageToolStripMenuItem_Click);
             // 
             // languageMenu
             // 
             this.languageMenu.Name = "languageMenu";
-            this.languageMenu.Size = new System.Drawing.Size(132, 22);
+            this.languageMenu.Size = new System.Drawing.Size(152, 22);
             this.languageMenu.Text = "Language";
             this.languageMenu.Click += new System.EventHandler(this.languageMenu_Click);
             // 
@@ -156,10 +159,12 @@
             // 
             this.portMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoMapServer,
-            this.Check});
+            this.Check,
+            this.reToolStripMenuItem});
             this.portMenu.Name = "portMenu";
             this.portMenu.Size = new System.Drawing.Size(44, 22);
             this.portMenu.Text = "Port";
+            this.portMenu.Click += new System.EventHandler(this.portMenu_Click);
             // 
             // autoMapServer
             // 
@@ -175,6 +180,14 @@
             this.Check.Size = new System.Drawing.Size(165, 22);
             this.Check.Text = "Check";
             this.Check.Click += new System.EventHandler(this.Check_Click);
+            // 
+            // reToolStripMenuItem
+            // 
+            this.reToolStripMenuItem.Name = "reToolStripMenuItem";
+            this.reToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.reToolStripMenuItem.Text = "re";
+            this.reToolStripMenuItem.Visible = false;
+            this.reToolStripMenuItem.Click += new System.EventHandler(this.reToolStripMenuItem_Click);
             // 
             // window
             // 
@@ -195,6 +208,26 @@
             this.easyCommandsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.easyCommandsToolStripMenuItem.Text = "Easy Commands";
             this.easyCommandsToolStripMenuItem.Click += new System.EventHandler(this.easyCommandsToolStripMenuItem_Click);
+            // 
+            // playerListToolStripMenuItem
+            // 
+            this.playerListToolStripMenuItem.Checked = true;
+            this.playerListToolStripMenuItem.CheckOnClick = true;
+            this.playerListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.playerListToolStripMenuItem.Name = "playerListToolStripMenuItem";
+            this.playerListToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.playerListToolStripMenuItem.Text = "Player List";
+            this.playerListToolStripMenuItem.Click += new System.EventHandler(this.playerListToolStripMenuItem_Click);
+            // 
+            // banListToolStripMenuItem
+            // 
+            this.banListToolStripMenuItem.Checked = true;
+            this.banListToolStripMenuItem.CheckOnClick = true;
+            this.banListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.banListToolStripMenuItem.Name = "banListToolStripMenuItem";
+            this.banListToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.banListToolStripMenuItem.Text = "Ban List";
+            this.banListToolStripMenuItem.Click += new System.EventHandler(this.banListToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -252,12 +285,13 @@
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // timerServerUpdate
             // 
             this.timerServerUpdate.Enabled = true;
-            this.timerServerUpdate.Interval = 10;
+            this.timerServerUpdate.Interval = 300;
             this.timerServerUpdate.Tick += new System.EventHandler(this.timerServerUpdate_Tick);
             // 
             // connectionType
@@ -361,25 +395,16 @@
             this.killServer.UseVisualStyleBackColor = false;
             this.killServer.Click += new System.EventHandler(this.killServer_Click);
             // 
-            // playerListToolStripMenuItem
+            // getExternalIP
             // 
-            this.playerListToolStripMenuItem.Checked = true;
-            this.playerListToolStripMenuItem.CheckOnClick = true;
-            this.playerListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.playerListToolStripMenuItem.Name = "playerListToolStripMenuItem";
-            this.playerListToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.playerListToolStripMenuItem.Text = "Player List";
-            this.playerListToolStripMenuItem.Click += new System.EventHandler(this.playerListToolStripMenuItem_Click);
+            this.getExternalIP.Enabled = true;
+            this.getExternalIP.Interval = 300;
+            this.getExternalIP.Tick += new System.EventHandler(this.getExternalIP_Tick);
             // 
-            // banListToolStripMenuItem
+            // openWindow
             // 
-            this.banListToolStripMenuItem.Checked = true;
-            this.banListToolStripMenuItem.CheckOnClick = true;
-            this.banListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.banListToolStripMenuItem.Name = "banListToolStripMenuItem";
-            this.banListToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.banListToolStripMenuItem.Text = "Ban List";
-            this.banListToolStripMenuItem.Click += new System.EventHandler(this.banListToolStripMenuItem_Click);
+            this.openWindow.Enabled = true;
+            this.openWindow.Tick += new System.EventHandler(this.openWindow_Tick);
             // 
             // Form1
             // 
@@ -448,6 +473,9 @@
         private System.Windows.Forms.ToolStripMenuItem easyCommandsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem playerListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem banListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reToolStripMenuItem;
+        private System.Windows.Forms.Timer getExternalIP;
+        private System.Windows.Forms.Timer openWindow;
     }
 }
 

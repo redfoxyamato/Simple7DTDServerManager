@@ -22,6 +22,7 @@ namespace Simple7DTDServer
     {
         SGA = 3
     }
+
     public class ListCopier<T>
     {
         public List<T> Copy(List<T> t)
@@ -68,6 +69,17 @@ namespace Simple7DTDServer
         public string steamid;
         public string ip;
         public int ping;
+
+        public double KDRatio
+        {
+            get
+            {
+                int d = deaths == 0 ? 1 : deaths;
+                int k = zombieKills + playerKills;
+                double killratio = (double)k / d;
+                return Math.Round(killratio, 2, MidpointRounding.ToEven);
+            }
+        }
 
         public static List<PlayerInfo> GetPlayerInfos(string str)
         {
@@ -208,8 +220,7 @@ namespace Simple7DTDServer
         }
         private Phase phase = Phase.WAITING_FOR_COMMAND_INPUT;
 
-        private static bool hideLPOutput;
-        private static bool hideSAOutput;
+        private static bool hideLPOutput, hideSAOutput;
 
         TcpClient tcpSocket;
 
@@ -237,7 +248,6 @@ namespace Simple7DTDServer
         {
             hideLPOutput = flag;
         }
-
         public static void SetHideSAOutput(bool flag)
         {
             hideSAOutput = flag;
@@ -309,28 +319,15 @@ namespace Simple7DTDServer
                 } while (tcpSocket.Available > 0 && !sb.ToString().EndsWith("\n"));
                 if (sb.ToString().Trim() != "")
                 {
-                    Util.WriteConsole("hideLP:" + hideLPOutput);
-                    Util.WriteConsole("hideSA:" + hideSAOutput);
-
                     string line = sb.ToString().Trim();
                     if (phase == Phase.WAITING_FOR_COMMAND_EXECUTION)
                     {
-                        Thread.Sleep(TimeOutMs);
-                        if ((line.Contains("command 'lp'") || line.Contains("command 'listplayers'")) && line.Contains("Telnet"))
+                        if ((line.Contains("'lp'") || line.Contains("'listplayers'")) && line.Contains("Telnet"))
                         {
                             phase = Phase.WAITING_PLAYER_INFO;
                             Util.WriteConsole("Changing telnet phase to lp waiting mode.");
                             pInfos = new List<PlayerInfo>();
                             buffer = line + "\n";
-                        }
-                        else if((line.Contains("command 'sa'") || line.Contains("command 'saveworld'")))
-                        {
-                            Util.WriteConsole("Changing phase to waiting for command input.");
-                            phase = Phase.WAITING_FOR_COMMAND_INPUT;
-                            if (hideSAOutput)
-                            {
-                                sb = new StringBuilder();
-                            }
                         }
                         else if (line.Contains("Executing command"))
                         {
@@ -338,10 +335,6 @@ namespace Simple7DTDServer
                             Thread.Sleep(TimeOutMs);
                             Util.WriteConsole("Changing phase to waiting for command input.");
                             phase = Phase.WAITING_FOR_COMMAND_INPUT;
-                        }
-                        if (phase == Phase.WAITING_PLAYER_INFO && hideLPOutput)
-                        {
-                            sb = new StringBuilder();
                         }
                         if (phase == Phase.WAITING_PLAYER_INFO && line.Contains("Total"))
                         {
@@ -369,19 +362,11 @@ namespace Simple7DTDServer
                                     OnPlayerListed(copier.Copy(pInfos), pInfos.Count);
                                 }
                             }
-                            if(hideLPOutput)
-                            {
-                                sb = new StringBuilder();
-                            }
                         }
                         else
                         {
                             //Console.WriteLine("New Line:" + line);
                             buffer += line + "\n";
-                        }
-                        if (line.Contains("sav") && hideSAOutput)
-                        {
-                            sb = new StringBuilder();
                         }
                         Util.WriteConsole("Changing phase to waiting for command input.");
                         phase = Phase.WAITING_FOR_COMMAND_INPUT;
@@ -413,10 +398,6 @@ namespace Simple7DTDServer
                                     OnPlayerListed(copier.Copy(pInfos), pInfos.Count);
                                 }
                             }
-                            if(hideLPOutput)
-                            {
-                                sb = new StringBuilder();
-                            }
                             Util.WriteConsole("Changing phase to waiting for command input.");
                             phase = Phase.WAITING_FOR_COMMAND_INPUT;
                         }
@@ -425,16 +406,15 @@ namespace Simple7DTDServer
                             //Console.WriteLine("New Line:" + line);
                             buffer += line + "\n";
                         }
-                        if (line.Contains("sav") && hideSAOutput)
-                        {
-                            sb = new StringBuilder();
-                        }
-                        if(line.Contains("command 'lp'") && hideLPOutput)
-                        {
-                            sb = new StringBuilder();
-                        }
                     }
-                    Thread.Sleep(TimeOutMs);
+                    if (hideLPOutput)
+                    {
+                        sb = RemoveLPOutput(sb);
+                    }
+                    if (hideSAOutput)
+                    {
+                        sb = RemoveSAOutput(sb);
+                    }
                 }
                 if (phase == Phase.WAITING_FOR_COMMAND_INPUT && waitingCue.Count > 0)
                 {
@@ -500,6 +480,38 @@ namespace Simple7DTDServer
                     cli.Close();
                 }
             return ret;
+        }
+
+        private StringBuilder RemoveLPOutput(StringBuilder builder)
+        {
+            string str = builder.ToString().Replace("\r", "");
+            string ret = "";
+            foreach (string line in str.Split("\n".ToCharArray()))
+            {
+                if ((line.ToLower().Contains("player") && !line.ToLower().Contains("players")))
+                {
+                }
+                else if (line.Trim() == "" || line.Contains("'lp'") || line.Contains("remote") || line.Contains("ping") || line.Contains("Total") || line.Contains("rot"))
+                {
+                    continue;
+                }
+                ret += line + "\r\n";
+            }
+            return new StringBuilder(ret);
+        }
+        private StringBuilder RemoveSAOutput(StringBuilder builder)
+        {
+            string str = builder.ToString().Replace("\r", "");
+            string ret = "";
+            foreach (string line in str.Split("\n".ToCharArray()))
+            {
+                if (line.Trim() == "" || line.Contains("'sa'") || line.Contains("Saving") || line.Contains("saved"))
+                {
+                    continue;
+                }
+                ret += line + "\r\n";
+            }
+            return new StringBuilder(ret);
         }
 
         void ParseTelnet(StringBuilder sb)

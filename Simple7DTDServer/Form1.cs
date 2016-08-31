@@ -20,11 +20,12 @@ namespace Simple7DTDServer
         private static bool hasServerStarted;
         private static bool portWarning;
 
-        private bool autoSave,hideSA;
+        private bool autoSave, hideSA;
         private int day, hour, saveInterval;
 
         private bool kickMode, autoUpdate, hideLP;
-        private int updateInterval, banDuration, comboBoxIndex;
+        private int banDuration, comboBoxIndex;
+        private double updateInterval;
 
         private static string language = "English";
 
@@ -46,6 +47,8 @@ namespace Simple7DTDServer
             get { return tel; }
         }
 
+        private static UPnPControlPoint upnp = new UPnPControlPoint();
+
         public static bool isConnectedToServer
         {
             get { return tel == null ? false : tel.IsConnected; }
@@ -59,7 +62,7 @@ namespace Simple7DTDServer
 
         public static string SERVERADMIN
         {
-            get { return serveradmin; }
+            get { return serveradmin + getNode("AdminFileName"); }
         }
 
         public Form1()
@@ -81,10 +84,12 @@ namespace Simple7DTDServer
             TelnetConnection.SetHideLPOutput(hideLP);
             TelnetConnection.SetHideSAOutput(hideSA);
 
-            commands = new EasyCommands(this,autoSave,hideSA,day,hour,saveInterval);
+            commands = new EasyCommands(this,autoSave,day,hour,saveInterval,hideSA);
             commands.Show();
+            commands.Visible = false;
 
             translateComponents();
+
 
             //MessageBox.Show(translateTo("autoDetectGame"));
             baseDir = @"C:\Program Files (x86)\Steam\steamapps\common\7 Days to Die";
@@ -93,14 +98,16 @@ namespace Simple7DTDServer
                 MessageBox.Show(translateTo("cantFoundGameDirectory"));
                 Close();
             }
+            
             serverCfg = baseDir + @"\serverconfig.xml";
             if (!File.Exists(serverCfg))
             {
                 MessageBox.Show(translateTo("cantFoundServerCfg"));
                 Close();
             }
-            serveradmin = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\7DaysToDie\Saves\serveradmin.xml";
-            if(!File.Exists(serveradmin))
+            serveradmin = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\7DaysToDie\Saves\";
+            
+            if (!Directory.Exists(serveradmin))
             {
                 MessageBox.Show("serveradmin.cfg couldn't find. Try start up server once.");
                 Close();
@@ -108,12 +115,13 @@ namespace Simple7DTDServer
 
             banList = new BanList();
             banList.Show();
+            banList.Visible = false;
 
             playerList = new PlayerList(kickMode, autoUpdate, hideLP, updateInterval, banDuration, comboBoxIndex);
             playerList.Show();
+            playerList.Visible = false;
 
             gameExe = baseDir + "\\7DaysToDie.exe";
-            Console.WriteLine(gameExe);
             if (getNode("TelnetEnabled") != "true")
             {
                 MessageBox.Show(translateTo("cantUseTelnet"));
@@ -129,7 +137,10 @@ namespace Simple7DTDServer
                 getLocalHostName();
             }
             */
-            //extIP = new WebClient().DownloadString("http://redfox32.info/ip.php");
+            if (isInternetConnected())
+            {
+                //extIP = new WebClient().DownloadString("http://pomepome.link/ip.php");
+            }
             if (settings.extServer)
             {
                 internalMode.Checked = false;
@@ -148,16 +159,16 @@ namespace Simple7DTDServer
             mainFolder = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
         }
 
-        public void setEasyCommandsSettings(bool autoSaveEnabled, bool hideSAOutput, int days, int hours,int autoSaveInterval)
+        public void setEasyCommandsSettings(bool autoSaveEnabled, int days, int hours,int autoSaveInterval,bool hideSAOutput)
         {
             autoSave = autoSaveEnabled;
-            hideSA = hideSAOutput;
             day = days;
             hour = hours;
             saveInterval = autoSaveInterval;
+            hideSA = hideSAOutput;
         }
 
-        public void SetPlayerListSettings(bool isKickMode, bool automaticUpdate, bool hideLPOutput, int updateInterval, int banDuration, int comboBoxIndex)
+        public void SetPlayerListSettings(bool isKickMode, bool automaticUpdate, bool hideLPOutput, double updateInterval, int banDuration, int comboBoxIndex)
         {
             kickMode = isKickMode;
             autoUpdate = automaticUpdate;
@@ -181,11 +192,10 @@ namespace Simple7DTDServer
             settings = Settings.Default;
             current_version = settings.currentVersion;
             autoSave = settings.autoSaveEnabled;
-            hideSA = settings.hideSAOutput;
             day = settings.day;
             hour = settings.hour;
             saveInterval = settings.autoSaveInterval;
-
+            hideSA = settings.hideSAOutput;
             kickMode = settings.kickMode;
             autoUpdate = settings.automaticUpdate;
             hideLP = settings.hideLPOutput;
@@ -206,10 +216,10 @@ namespace Simple7DTDServer
             settings.currentVersion = current_version;
 
             settings.autoSaveEnabled = autoSave;
-            settings.hideSAOutput = hideSA;
             settings.day = day;
             settings.hour = hour;
             settings.autoSaveInterval = saveInterval;
+            settings.hideSAOutput = hideSA;
 
             settings.kickMode = kickMode;
             settings.automaticUpdate = autoUpdate;
@@ -217,6 +227,10 @@ namespace Simple7DTDServer
             settings.updateInterval = updateInterval;
             settings.banDuration = banDuration;
             settings.comboBoxIndex = comboBoxIndex;
+
+            settings.showBanList = banList.Visible;
+            settings.showEasyCommands = commands.Visible;
+            settings.showPlayerList = playerList.Visible;
 
             settings.Save();
         }
@@ -293,7 +307,7 @@ namespace Simple7DTDServer
             minutes = date.Minute;
             second = date.Second;
             millisecond = date.Millisecond;
-            return String.Format("{0}_{1}_{2}_{3}_{4}_{5}.{6}",year,month,day,hour,minutes,second,millisecond);
+            return string.Format("{0}_{1}_{2}_{3}_{4}_{5}.{6}",year,month,day,hour,minutes,second,millisecond);
         }
         public static string getNode(string node_name,string name="")
         {
@@ -382,6 +396,21 @@ namespace Simple7DTDServer
         }
         private void ServerInfomationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (getNode("ServerName") == null)
+            {
+                Console.WriteLine("Name null");
+                return;
+            }
+            if (getNode("ServerPassword") == null)
+            {
+                Console.WriteLine("pass null");
+                return;
+            }
+            if(getNode("ServerPort") == null)
+            {
+                Console.WriteLine("port null");
+                return;
+            }
             MessageBox.Show
                 (
                     string.Format(
@@ -396,11 +425,14 @@ namespace Simple7DTDServer
         }
         private void openPort(int port, string description)
         {
+            if(!upnp.isUPnPEnabled())
+            {
+                return;
+            }
             textBox1.Text += translateTo("openPort") + ":" + port + "\r\n";
             Task.Factory.StartNew(() =>
             {
-                UPnPControlPoint upnp = new UPnPControlPoint();
-                if (upnp.AddPortMapping((ushort)port, description))
+                if (upnp.AddPortMapping((ushort)port))
                 {
                     if (port == serverPort)
                     {
@@ -418,12 +450,15 @@ namespace Simple7DTDServer
 
         private void closePort(int port)
         {
+            if(!upnp.isUPnPEnabled())
+            {
+                return;
+            }
             textBox1.Text += translateTo("closePort") + ":" + port + "\r\n";
             Task.Factory.StartNew(() =>
             {
-                UPnPControlPoint upnp = new UPnPControlPoint();
 
-                if (upnp.DeletePortMapping((ushort)port))
+                if (upnp.RemovePortMapping((ushort)port))
                 {
                     Console.WriteLine("closed port:" + port + " successfully");
                     if (port == serverPort)
@@ -443,7 +478,7 @@ namespace Simple7DTDServer
         {
             if(editor != null)
             {
-                MessageBox.Show("cantStartWhenEditting");
+                MessageBox.Show("cantStartWhenEditing");
                 return;
             }
             if (!hasServerStarted)
@@ -460,10 +495,12 @@ namespace Simple7DTDServer
                 }
                 else
                 {
-                    if(portMenu.Enabled && autoMapServer.Checked)
+                    if(autoMapServer.Enabled && autoMapServer.Checked)
                     {
+                        Console.WriteLine("Start port opening...");
                         MessageBox.Show(translateTo("openServerPort"));
                         openPort(serverPort,"7DTD server");
+                        Console.WriteLine("port opened.");
                     }
                 }
                 hasServerStarted = true;
@@ -573,7 +610,7 @@ namespace Simple7DTDServer
             stopServer.Enabled = flag;
             startServer.Enabled = !flag;
             manager.Enabled = !flag ;
-            autoMapServer.Enabled = !flag && internalMode.Checked && UPnPControlPoint.isUPnPEnabled();
+            autoMapServer.Enabled = flag2 && internalMode.Checked && upnp.isUPnPEnabled();
             Check.Enabled = isInternetConnected();
             internalMode.Enabled = !flag;
             externalMode.Enabled = flag2;
@@ -642,7 +679,7 @@ namespace Simple7DTDServer
             if (!File.Exists("bin/TCPServer.exe"))
             {
                 MessageBox.Show(translateTo("notEnoughFile"));
-                return true;
+                return false;
             }
             string binPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\bin\";
             return PortChecker.isOpen(binPath,port);
@@ -690,11 +727,7 @@ namespace Simple7DTDServer
 
         private void Check_Click(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(() =>
-            {
-                MessageBox.Show(isPortOpen(serverPort) ? translateTo("portOpening") : translateTo("portClosing"));
-
-            }).Start();
+            MessageBox.Show(isPortOpen(serverPort) ? translateTo("portOpening") : translateTo("portClosing"));
         }
 
         private void easyCommandsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -706,6 +739,35 @@ namespace Simple7DTDServer
             easyCommandsToolStripMenuItem.Checked = flag;
             commands.Visible = flag;
         }
+
+        private void reToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            upnp.getAllMappings();
+        }
+
+        private void getExternalIP_Tick(object sender, EventArgs e)
+        {
+            if(!externalMode.Checked && extIP.Trim() == "")
+            {
+                if(upnp.isUPnPEnabled())
+                {
+                    extIP = upnp.getExternalIPAddress();
+                }
+            }
+        }
+
+        private void portMenu_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void openWindow_Tick(object sender, EventArgs e)
+        {
+            openWindow.Stop();
+            SetBanListVisible(settings.showBanList);
+            setEasyCommandsVisible(settings.showEasyCommands);
+            SetPlayerListVisible(settings.showPlayerList);
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if(p != null && tel != null && tel.IsConnected)
@@ -735,8 +797,7 @@ namespace Simple7DTDServer
             {
                 Task.Factory.StartNew(() =>
                 {
-                    UPnPControlPoint p = new UPnPControlPoint();
-                    var result = p.GetExternalIPAddress();
+                    var result = upnp.getExternalIPAddress();
                     if (result == null || result.Trim() == "")
                     {
                         extIP = "UNKNOWN";

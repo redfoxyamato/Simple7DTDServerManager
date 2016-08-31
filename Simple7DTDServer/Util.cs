@@ -24,5 +24,11 @@ namespace Simple7DTDServer
         {
             Console.WriteLine(obj);
         }
+
+        public static void SetValue(NumericUpDown obj,decimal value)
+        {
+            decimal val = Math.Min(Math.Max(obj.Minimum, value), obj.Maximum);
+            obj.Value = val;
+        }
     }
 }

@@ -22,8 +22,8 @@ namespace Simple7DTDServer
             }
             try
             {
-                string phpContent = new WebClient().DownloadString("http://redfox32.info/port.php?port=" + port);
-                return phpContent.Contains("opened");
+                string phpContent = new WebClient().DownloadString("http://pomepome.link/port.php?port=" + port);
+                return phpContent.Contains("開いています");
             }
             catch
             {

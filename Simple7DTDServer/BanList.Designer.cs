@@ -75,6 +75,7 @@
             // updateBanList
             // 
             this.updateBanList.Enabled = true;
+            this.updateBanList.Interval = 600;
             this.updateBanList.Tick += new System.EventHandler(this.updateBanList_Tick);
             // 
             // button1

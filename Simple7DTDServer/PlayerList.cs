@@ -14,24 +14,31 @@ namespace Simple7DTDServer
     {
         private static string[] timeunits = new string[] { "minute", "hour", "day", "month", "year" };
 
-        public PlayerList(bool isKickMode,bool automaticUpdate,bool hideLPOutput,int updateInterval,int banDuration,int comboBoxIndex)
+        public PlayerList(bool isKickMode,bool automaticUpdate,bool hideLPOutput,double updateInterval,int banDuration,int comboBoxIndex)
         {
-            InitializeComponent();
-            Util.SetDoubleBuffering(listView1, true);
-            timerAutomatic.Stop();
-            timerAutomatic.Interval = updateInterval * 1000;
-            if(automaticUpdate)
+            try
             {
-                timerAutomatic.Start();
+                InitializeComponent();
+                Util.SetDoubleBuffering(listView1, true);
+                timerAutomatic.Stop();
+                timerAutomatic.Interval = (int)(updateInterval * 1000);
+                if (automaticUpdate)
+                {
+                    timerAutomatic.Start();
+                }
+                checkBoxAutomatic.Checked = automaticUpdate;
+                checkBoxHideLPOutput.Checked = hideLPOutput;
+                radioButtonKick.Checked = isKickMode;
+                radioButtonBan.Checked = !isKickMode;
+                Util.SetValue(numericUpdate, (decimal)updateInterval);
+                Util.SetValue(numericDuration, banDuration);
+                comboBoxTimeUnit.SelectedIndex = comboBoxIndex;
             }
-            checkBoxAutomatic.Checked = automaticUpdate;
-            checkBoxHideLPOutput.Checked = hideLPOutput;
-            radioButtonKick.Checked = isKickMode;
-            radioButtonBan.Checked = !isKickMode;
-            numericUpdate.Value = updateInterval;
-            numericDuration.Value = banDuration;
-            comboBoxTimeUnit.SelectedIndex = comboBoxIndex;
-
+            catch(Exception ex)
+            {
+                Console.WriteLine("Message:{0}",ex.Message);
+                Console.WriteLine("StackTrace:\r\n{0}",ex.StackTrace);
+            }
         }
 
         private void update_Tick(object sender, EventArgs e)
@@ -81,7 +88,7 @@ namespace Simple7DTDServer
                 comboBoxTimeUnit.Enabled = false;
                 checkBoxHideLPOutput.Enabled = false;
             }
-            INSTANCE.SetPlayerListSettings(radioButtonKick.Checked, checkBoxAutomatic.Checked, checkBoxHideLPOutput.Checked, (int)numericUpdate.Value, (int)numericDuration.Value, comboBoxTimeUnit.SelectedIndex);
+            INSTANCE.SetPlayerListSettings(radioButtonKick.Checked, checkBoxAutomatic.Checked, checkBoxHideLPOutput.Checked, (double)numericUpdate.Value, (int)numericDuration.Value, comboBoxTimeUnit.SelectedIndex);
             translateComponents();
         }
         private void PlayerList_FormClosing(object sender, FormClosingEventArgs e)
@@ -114,6 +121,18 @@ namespace Simple7DTDServer
             listView1.Size = size;
         }
 
+        private bool IsAddedPlayer(string steamid)
+        {
+            foreach(ListViewItem item in listView1.Items)
+            {
+                if (item.SubItems[12].Text == steamid)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void OnPlayerListUpdated(List<PlayerInfo> pList, int pCount)
         {
             Util.WriteConsole("PlayerList.OnPlayerListUpdated");
@@ -127,6 +146,10 @@ namespace Simple7DTDServer
                 listView1.Items.Clear();
                 foreach (PlayerInfo info in pList)
                 {
+                    if(IsAddedPlayer(info.steamid))
+                    {
+                        continue;
+                    }
                     ListViewItem item = new ListViewItem();
 
                     item.Text = info.id.ToString();
@@ -139,6 +162,7 @@ namespace Simple7DTDServer
                     item.SubItems.Add(info.deaths.ToString());
                     item.SubItems.Add(info.zombieKills.ToString());
                     item.SubItems.Add(info.playerKills.ToString());
+                    item.SubItems.Add(info.KDRatio.ToString());
                     item.SubItems.Add(info.score.ToString());
                     item.SubItems.Add(info.level.ToString());
                     item.SubItems.Add(info.steamid);
@@ -161,7 +185,7 @@ namespace Simple7DTDServer
 
         private void numericUpdate_ValueChanged(object sender, EventArgs e)
         {
-            timerAutomatic.Interval = (int)numericUpdate.Value * 1000;
+            timerAutomatic.Interval = (int)(numericUpdate.Value * 1000);
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
@@ -205,19 +229,15 @@ namespace Simple7DTDServer
             {
                 if (radioButtonBan.Checked)
                 {
-                    cmd = "ban add ";
-                    cmd += item.SubItems[2].Text + " ";
-                    cmd += numericDuration.Value + " ";
-                    cmd += timeunits[comboBoxTimeUnit.SelectedIndex];
+                    cmd = string.Format("ban add {0} {1} {2}",item.SubItems[2].Text,numericDuration.Value, timeunits[comboBoxTimeUnit.SelectedIndex]);
                 }
                 else
                 {
-                    cmd = "kick ";
-                    cmd += item.SubItems[2].Text;
+                    cmd = string.Format("kick {0}",item.SubItems[2].Text);
                 }
                 if(textBoxReason.Text.Trim() != "")
                 {
-                    cmd += " " + textBoxReason.Text;
+                    cmd += string.Format(" \"{0}\"", textBoxReason.Text);
                 }
                 if (isConnectedToServer && cmd.Trim() != "")
                 {

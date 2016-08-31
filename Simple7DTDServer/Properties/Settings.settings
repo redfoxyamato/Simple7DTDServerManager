@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="language" Type="System.String" Scope="User">
-      <Value Profile="(Default)">English</Value>
+      <Value Profile="(Default)">Japanese</Value>
     </Setting>
     <Setting Name="extServer" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -26,9 +26,6 @@
     <Setting Name="autoSaveEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="hideSAOutput" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="hideLPOutput" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -47,7 +44,7 @@
     <Setting Name="automaticUpdate" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="updateInterval" Type="System.Int32" Scope="User">
+    <Setting Name="updateInterval" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="banDuration" Type="System.Int32" Scope="User">
@@ -55,6 +52,18 @@
     </Setting>
     <Setting Name="comboBoxIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="hideSAOutput" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="showBanList" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="showPlayerList" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="showEasyCommands" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

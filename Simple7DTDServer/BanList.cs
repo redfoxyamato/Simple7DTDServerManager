@@ -30,8 +30,15 @@ namespace Simple7DTDServer
 
         public static List<BanInfo> getBanInfos()
         {
-            string xmlPath = SERVERADMIN;
+
+            string xmlPath = getNode("SaveGameFolder") == "" ? SERVERADMIN : getNode("SaveGameFolder") + "\\" + getNode("AdminFileName");
+
             List<BanInfo> banList = new List<BanInfo>();
+
+            if (!File.Exists(xmlPath))
+            {
+                return banList;
+            }
 
             FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             XmlTextReader reader = new XmlTextReader(fs);
@@ -69,49 +76,68 @@ namespace Simple7DTDServer
             return banList;
         }
 
+        public bool isThereSteamid(string steamid)
+        {
+            foreach(ListViewItem item in listView1.Items)
+            {
+                if(item.Text == steamid)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void updateBanList_Tick(object sender, EventArgs e)
         {
             List<BanInfo> banInfos = getBanInfos();
-            for(int i = 0; i < banInfos.Count; i++)
+
+            List<string> steamidList = new List<string>();
+            foreach (ListViewItem item in listView1.SelectedItems)
+            {
+                steamidList.Add(item.Text);
+            }
+
+            for (int i = 0; i < banInfos.Count; i++)
             {
                 if(banInfos[i].EXPIRATION < DateTime.Now)
                 {
+                    if (isConnectedToServer)
+                    {
+                        string steamid = banInfos[i].STEAMID;
+                        TELNET.AddSendingCue("ban remove " + steamid);
+                    }
                     Util.WriteConsole("Detected expired ban. Removing...");
                     banInfos.RemoveAt(i);
                 }
             }
 
-            List<string> steamidList = new List<string>();
-            foreach(ListViewItem item in listView1.SelectedItems)
-            {
-                steamidList.Add(item.Text);
-            }
 
             listView1.Items.Clear();
             foreach(BanInfo info in banInfos)
             {
-                Util.WriteConsole("Adding ban item...");
-                string steamid = info.STEAMID;
-                string unbandate = info.EXPIRATION.ToString();
-                string reason = info.REASON;
+                if (!isThereSteamid(info.STEAMID))
+                {
+                    Util.WriteConsole("Adding ban item...");
+                    string steamid = info.STEAMID;
+                    string unbandate = info.EXPIRATION.ToString();
+                    string reason = info.REASON;
 
-                ListViewItem item = new ListViewItem();
+                    ListViewItem item = new ListViewItem();
 
-                item.Text = steamid;
-                item.SubItems.Add(unbandate);
-                item.SubItems.Add(reason);
+                    item.Text = steamid;
+                    item.SubItems.Add(unbandate);
+                    item.SubItems.Add(reason);
 
-                listView1.Items.Add(item);
+                    listView1.Items.Add(item);
+                }
             }
 
-            if(steamidList.Count > 0)
+            foreach(ListViewItem item in listView1.Items)
             {
-                foreach(ListViewItem item in listView1.Items)
+                if(steamidList.Contains(item.Text))
                 {
-                    if(steamidList.Contains(item.Text))
-                    {
-                        item.Selected = true;
-                    }
+                    item.Selected = true;
                 }
             }
 
