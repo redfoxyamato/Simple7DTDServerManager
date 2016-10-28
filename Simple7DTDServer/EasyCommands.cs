@@ -76,7 +76,7 @@ namespace Simple7DTDServer
                 {
                     str = string.Format("{0}{1}{0}", "\"", str);
                 }
-                TELNET.AddSendingCue("say " + message.Text);
+                TELNET.AddSendingCue("say " + str);
                 message.Text = "";
             }
         }

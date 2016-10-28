@@ -532,6 +532,7 @@ namespace Simple7DTDServer
             int port = externalMode.Checked ? (int)serverExternalPort.Value : telnetPort;
             if (TelnetConnection.canConnect(host,port))
             {
+                
                 textBox1.Text = translateTo("connected") + "\r\n\r\n";
                 connectCheck.Stop();
                 tel = new TelnetConnection(host,port,textBox1,true);
