@@ -21,7 +21,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="currentVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">alpha14</Value>
+      <Value Profile="(Default)">alpha15</Value>
     </Setting>
     <Setting Name="autoSaveEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

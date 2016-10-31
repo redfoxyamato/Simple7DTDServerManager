@@ -203,6 +203,7 @@ namespace Simple7DTDServer
     {
         public delegate void PlayersEventHandler(List<PlayerInfo> pInfos, int playerCount);
         public event PlayersEventHandler OnPlayerListed;
+
         public enum Phase
         {
             WAITING_FOR_COMMAND_INPUT,

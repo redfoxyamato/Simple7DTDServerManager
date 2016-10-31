@@ -97,7 +97,7 @@ namespace Simple7DTDServer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("alpha14")]
+        [global::System.Configuration.DefaultSettingValueAttribute("alpha15")]
         public string currentVersion {
             get {
                 return ((string)(this["currentVersion"]));

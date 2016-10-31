@@ -37,7 +37,12 @@ namespace Simple7DTDServer
             }
             parseFromFile();
             removeDuplicate();
-
+            {
+                foreach(Information i in infos)
+                {
+                    Console.WriteLine("Info {0}:{1}:{2}", i.id, i.type, i.desc);
+                }
+            }
             for (int i = 0; i < settings.Count; i++)
             {
                 if (settings[i].id.Trim() == "")
@@ -54,6 +59,8 @@ namespace Simple7DTDServer
             }
             if(settings.Count != infos.Count)
             {
+                Console.WriteLine("settings:{0}", settings.Count);
+                Console.WriteLine("infos:{0}", infos.Count);
                 listBox1.Items.Clear();
                 infos = new List<Information>();
                 MessageBox.Show(Form1.translateTo("invalidCfg"));
@@ -209,28 +216,33 @@ namespace Simple7DTDServer
             try
             {
                 string p = lang_path + string.Format("{0}_{1}.xml", comboBox1.SelectedItem, lang);
+                if(!File.Exists(p))
+                {
+                    Console.WriteLine("There is no info:{0}",p);
+                    return;
+                }
                 reader = new XmlTextReader(new StreamReader(p, Encoding.UTF8));
                 while (reader.Read())
                 {
-                    if (reader.NodeType == XmlNodeType.Element)
-                    {
-                        if (reader.MoveToFirstAttribute())
+                        if (reader.NodeType == XmlNodeType.Element)
                         {
-                            string id = reader.Value;
-                            if (reader.MoveToNextAttribute())
+                            if (reader.MoveToFirstAttribute())
                             {
-                                Type type = getType(reader.Value);
-                                if (type == Type.UNKNOWN)
-                                {
-                                    continue;
-                                }
+                                string id = reader.Value;
                                 if (reader.MoveToNextAttribute())
                                 {
-                                    infos.Add(new Information(id, type, reader.Value));
+                                    Type type = getType(reader.Value);
+                                    if (type == Type.UNKNOWN)
+                                    {
+                                        continue;
+                                    }
+                                    if (reader.MoveToNextAttribute())
+                                    {
+                                        infos.Add(new Information(id, type, reader.Value));
+                                    }
                                 }
                             }
                         }
-                    }
                 }
                 if (!isThereSavePath())
                 {
@@ -244,7 +256,7 @@ namespace Simple7DTDServer
             }
             catch (XmlException ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
             finally
             {
