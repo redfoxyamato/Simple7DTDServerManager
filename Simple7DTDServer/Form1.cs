@@ -602,7 +602,6 @@ namespace Simple7DTDServer
             {
                 killServer.Enabled = false;
             }
-            portMenu.Enabled = upnp.UPnPAvailable;
             manager.Enabled = !getExistingServer();
             bool flag = getIsConnected() && hasServerStarted;
             bool flag2 = !flag && isInternetConnected();
